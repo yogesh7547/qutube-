@@ -1,1 +1,1 @@
-a youtube like full stack app for video streaming with an additional tweet section like twitter
+a youtube like fullstack app for video streaming and with an additional tweet feature 
