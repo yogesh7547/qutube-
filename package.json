@@ -1,0 +1,23 @@
+{
+  "name": "youtibe-like-full-stack-app",
+  "version": "1.0.0",
+  "description": "a full stack app similar to youtube",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yogesh7547/qutube-.git"
+  },
+  "keywords": [
+    "javascript",
+    "backend"
+  ],
+  "author": "yogesh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yogesh7547/qutube-/issues"
+  },
+  "homepage": "https://github.com/yogesh7547/qutube-#readme"
+}
