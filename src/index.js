@@ -2,16 +2,23 @@
 
 import dotenv from "dotenv";
 
+
 import connectDB from "./db/index.js";
 
 dotenv.config({
-  path: "./env",
+  path: "./env", 
 });
+
 
 connectDB();
 
 
 
+//dotenv is a package that loads environment variables from a .env file into your Node.js app
+
+
+//dotenv.config() reads your .env file and loads those variables into memory so they're available as process.env.WHATEVER.
+//you need to call it before any code (like connectDB function ) that tries to use those environment variables.
 
 
 
