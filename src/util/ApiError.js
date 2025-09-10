@@ -22,3 +22,11 @@ class ApiError extends Error {
 
 
 export {ApiError}
+
+
+
+
+//class ApiError extends Error
+/*
+custom error class that extends JavaScript's built-in Error class.
+*/
