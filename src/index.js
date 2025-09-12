@@ -1,5 +1,5 @@
 // require('dotenv').config({path:'./env'})
-
+import { app } from "./app.js";
 import dotenv from "dotenv";
 
 
@@ -60,6 +60,7 @@ connectDB()
 /*
 import express from 'express'
 const app = express()
+
 
 
 ;(async()=>{
