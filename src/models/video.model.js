@@ -43,3 +43,12 @@ videoSchema.plugin(mongooseAggregatePaginate);
 
 export const Video = mongoose.model("Video", videoSchema);
 
+
+
+
+
+
+
+//videoSchema.plugin(mongooseAggregatePaginate);
+//When listing or searching videos, you rarely want to fetch thousands at once. Pagination lets you display a few videos per page and navigate through results.
+

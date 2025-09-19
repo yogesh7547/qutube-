@@ -92,3 +92,11 @@ userSchema.methods.generateRefreshToken= function(){
 export const User = mongoose.model("User", userSchema);
 
 // index:true- makes the field searchable. since username is going to be used for searching a lot
+
+// mongooseAggregatePaginate: A plugin that helps paginate results of MongoDB aggregates (useful for listing or searching many records efficiently). Though imported, not yet used in this schema.
+
+// jsonwebtoken (JWT): A library to create and verify JSON Web Tokens. These are used for authentication and session management without storing everything on the server.
+
+// bcrypt: A hashing library used for secure password storage. It ensures plain-text passwords are never stored.
+
+//By chaining .methods.isPasswordCorrect = function(...), you define a reusable function for each user instance. Every user can call user.isPasswordCorrect(password) to verify passwords using their own hashed password field.
