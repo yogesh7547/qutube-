@@ -82,8 +82,3 @@ export { registerUser };
 
 
 
-//.select("-password -refreshToken"):
-// This part excludes the password and refreshToken fields from the resulting document.
-// The minus sign (-) before the field names means "exclude these fields.
-
-// req.files is an object provided by file-upload middleware (such as multer or express-fileupload) in Express.js. It contains the files uploaded from the client, grouped by input field names.
