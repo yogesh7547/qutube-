@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 
 import connectDB from "./db/index.js";
 
+// console.log("ACCESS_TOKEN_SECRET on startup:", process.env.ACCESS_TOKEN_SECRET); 
+
 dotenv.config({
   path: "./.env", 
 });

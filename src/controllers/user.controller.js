@@ -7,14 +7,15 @@ import { ApiResponse } from "../util/ApiResponse.js";
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
-    const accessToken = user.generateAcessToken;
-    const refreshToken = user.generateRefreshToken;
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
 
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
 
     return { accessToken, refreshToken };
   } catch (error) {
+    console.error("TOKEN GENERATION ERROR:", error);
     throw new ApiError(
       500,
       "something went wrong while generating access and refresh token"
