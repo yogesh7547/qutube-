@@ -3,7 +3,8 @@ import { ApiError } from "../util/ApiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../util/cloudinary.js";
 import { ApiResponse } from "../util/ApiResponse.js";
-import jwt, { verify } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+// import { deleteFromCloudinary } from "../util/DeleteFromCloudinary.js";
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -293,6 +294,11 @@ const updateUserAvatar= asyncHandler(async(req,res)=>{
     throw new ApiError(400,"Error while uploading on avatar")
   }
 
+  const previousAvatarUrl= await User.findById(req.user._id).avatar.url;
+  const urlParts=previousAvatarUrl.split("/")
+  const publicIdWithExtension = urlParts[urlParts.length - 1];
+  const publicId = publicIdWithExtension.split('.')[0];
+
   const user=await User.findByIdAndUpdate(
     req.user?._id,
     {
@@ -303,11 +309,16 @@ const updateUserAvatar= asyncHandler(async(req,res)=>{
     },
     {new:true}
   ).select("-password")
+
+  if(publicId){
+    const resultOfDeletion=await deleteFromCloudinary(publicId);
+  }
  
   return res
   .status(200)
   .json(new ApiResponse(200,user,"Avatar file updated successfully"))
 
+  
 
 })
 
