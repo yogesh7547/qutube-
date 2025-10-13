@@ -25,7 +25,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
   }
 };
 
-const registerUser = asyncHandler(async (req, res) => {
+const registerUser = asyncHandler(async (req, res) => { 
   //get user details from frontend
   //validation- not empty
   //check if user already exist:username, email
@@ -57,7 +57,8 @@ const registerUser = asyncHandler(async (req, res) => {
   // console.log(req.files);
 
   const avatarLocalPath = req.files?.avatar[0]?.path;
-  // const coverImageLocalPath= req.files?.coverImage[0]?.path;4
+  // console.log(avatarLocalPath)
+  // const coverImageLocalPath= req.files?.coverImage[0]?.path;
 
   let coverImageLocalPath;
   if (
@@ -283,6 +284,7 @@ const updateAccountDetails= asyncHandler(async(req,res)=>{
 
 const updateUserAvatar= asyncHandler(async(req,res)=>{
   const avatarLocalpath= req.file?.path
+  // console.log(avatarLocalpath)
 
   if(!avatarLocalpath){
     throw new ApiError(400, "Avatar file is missing")
@@ -294,7 +296,8 @@ const updateUserAvatar= asyncHandler(async(req,res)=>{
     throw new ApiError(400,"Error while uploading on avatar")
   }
 
-  const previousAvatarUrl= await User.findById(req.user._id).avatar.url;
+  const previousUser= await User.findById(req.user._id);
+  const previousAvatarUrl=previousUser.avatar.url;
   const urlParts=previousAvatarUrl.split("/")
   const publicIdWithExtension = urlParts[urlParts.length - 1];
   const publicId = publicIdWithExtension.split('.')[0];
