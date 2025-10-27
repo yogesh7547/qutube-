@@ -168,8 +168,8 @@ const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: {
-        refreshToken: undefined,
+      $unset: {
+        refreshToken: 1,// this removes the field from document
       },
     },
     {
@@ -298,10 +298,9 @@ const updateUserAvatar= asyncHandler(async(req,res)=>{
   }
 
   const previousUser= await User.findById(req.user._id);
-  const previousAvatarUrl=previousUser.avatar.url;
-  const urlParts=previousAvatarUrl.split("/")
-  const publicIdWithExtension = urlParts[urlParts.length - 1];
-  const publicId = publicIdWithExtension.split('.')[0];
+  const previousAvatarUrl=previousUser?.avatar.url;
+
+  
 
   const user=await User.findByIdAndUpdate(
     req.user?._id,
@@ -314,9 +313,27 @@ const updateUserAvatar= asyncHandler(async(req,res)=>{
     {new:true}
   ).select("-password")
 
-  if(publicId){
-    const resultOfDeletion=await deleteFromCloudinary(publicId);
+
+
+  if(previousAvatarUrl){
+   
+      const urlParts=previousAvatarUrl?.split("/")
+      const publicIdWithExtension = urlParts[urlParts?.length - 1];
+      const publicId = publicIdWithExtension?.split('.')[0];
+
+      if(publicId){
+        
+        try {
+           const resultOfDeletion=await deleteFromCloudinary(publicId);
+        } catch (error) {
+          console.log("failed to delete old avatar file ")
+        }
+       
+      }
+    
   }
+
+  
  
   return res
   .status(200)
@@ -333,11 +350,15 @@ const updateUserCoverImage= asyncHandler(async(req,res)=>{
     throw new ApiError(400, "coverImage file is missing")
   }
 
+
   const coverImage= await uploadOnCloudinary(coverImageLocalpath)
 
   if(!coverImage.url){
     throw new ApiError(400,"Error while uploading on coverImage")
   }
+
+  const previousUser= await User.findById(req.user._id);
+  const previousCoverImageUrl= previousUser?.coverImage.url
 
   const user=await User.findByIdAndUpdate(
     req.user?._id,
@@ -349,6 +370,18 @@ const updateUserCoverImage= asyncHandler(async(req,res)=>{
     },
     {new:true}
   ).select("-password")
+
+  if(previousCoverImageUrl){
+    const urlParts=previousCoverImageUrl?.split("/")
+    const publicIdWithExtension = urlParts[urlParts?.length - 1];
+    const publicId=publicIdWithExtension?.split(".")[0]
+
+    try {
+       const resultOfDeletion= await deleteFromCloudinary(publicId);
+    } catch (error) {
+      console.log("failed to delete previos cover-image")
+    }
+  }
  
   return res
   .status(200)
