@@ -1,7 +1,7 @@
 import mongoose, { isValidObjectId } from "mongoose";
 import { Like } from "../models/like.model.js";
 import { Video } from "../models/video.model.js";
-import { Commnet } from "../models/comment.model.js";
+import { Comment } from "../models/comment.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -31,7 +31,7 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
   });
 
   if (existingLike) {
-    await Like.deleteOne();
+    await existingLike.deleteOne();
 
     video.likes -= 1;
 
@@ -66,7 +66,7 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
 
   const {commentId}= req.params;
 
-  const comment = await Commnet.findById(commentId)
+  const comment = await Comment.findById(commentId)
 
   if(!comment){
     throw new ApiError(400, "comment not found")
@@ -78,13 +78,13 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
   })
 
   if(existingLike){
-    await Like.deleteOne()
+    await existingLike.deleteOne()
     comment.likes-=1;
-    comment.save()
+    await comment.save()
 
     return res
     .status(200)
-    json(new ApiResponse(200, {}, "successfully deleted the like on comment"))
+    .json(new ApiResponse(200, {}, "successfully deleted the like on comment"))
   }
 
   else{
@@ -94,7 +94,7 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
     })
 
     comment.likes+=1;
-    comment.save()
+    await comment.save()
 
     const updatedLike= await like.populate("likedBy", "username avatar")
 
@@ -123,9 +123,9 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
   })
 
   if(existingLike){
-    await Like.deleteOne()
+    await existingLike.deleteOne()
     tweet.likes-=1;
-    tweet.save()
+    await tweet.save()
 
     return res
     .status(200)
@@ -142,12 +142,14 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
     tweet.likes+=1;
     await tweet.save()
 
-    const updatedLike= await like.populate("likedBy", "username avatar")
+    const updatedLike= await like.populate("likedBy", "username avatar");
+
+    return res
+    .status(200)
+    .json(200, {updatedLike}, "successfully liked the tweet")
   }
 
-  return res
-  .status(200)
-  .json(200, {updatedLike}, "successfully liked the tweet")
+  
 });
 
 const getLikedVideos = asyncHandler(async (req, res) => {
