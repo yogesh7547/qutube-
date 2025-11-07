@@ -38,6 +38,10 @@ const getUserTweets = asyncHandler(async (req, res) => {
   const {userId}= req.params;
   const user= await User.findById(userId)
 
+  if(!mongoose.isValidObjectId(userId)){
+      throw new ApiError(400, "invalid user Id")
+    }
+
   if (!user) {
     throw new ApiError(404, "User not found");
   }     
@@ -88,6 +92,10 @@ const updateTweet = asyncHandler(async (req, res) => {
   //TODO: update tweet
   const {newContent}= req.body
   const {tweetId}= req.params
+
+  if (!mongoose.isValidObjectId(tweetId)) {
+    throw new ApiError(400, "Invalid tweet ID");
+  }
   
   if(!newContent||!newContent.trim()){
     throw new ApiError(400, "Content is required")
@@ -116,6 +124,9 @@ const updateTweet = asyncHandler(async (req, res) => {
 const deleteTweet = asyncHandler(async (req, res) => {
   //TODO: delete tweet
   const {tweetId}=req.params;
+  if(!mongoose.isValidObjectId(tweetId)){
+      throw new ApiError(400, "invalid tweet Id")
+    }
   const tweet= await Tweet.findById(tweetId)
   await tweet.deleteOne()
 

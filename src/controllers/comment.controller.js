@@ -10,6 +10,10 @@ const getVideoComments = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   const { page = 1, limit = 10 } = req.query;
 
+  if(!mongoose.isValidObjectId(videoId)){
+    throw new ApiError(400, "invalid video Id")
+  }
+
   const video = await Video.findById(videoId);
 
   if (!video) {
@@ -72,6 +76,10 @@ const addComment = asyncHandler(async (req, res) => {
   const { content } = req.body;
   const { videoId } = req.params;
 
+  if(!mongoose.isValidObjectId(videoId)){
+    throw new ApiError(400, "invalid video Id")
+  }
+
   if (!content || !content.trim()) {
     throw new ApiError(400, "content should not be empty");
   }
@@ -104,6 +112,10 @@ const updateComment = asyncHandler(async (req, res) => {
   const {newContent}= req.body
   const {commenId}=req.params;
 
+  if(!mongoose.isValidObjectId(commenId)){
+    throw new ApiError(400, "invalid comment Id")
+  }
+
   if(!newContent||!newContent.trim()){
     throw new ApiError(400, "content cannot be empty")
   }
@@ -126,7 +138,11 @@ const updateComment = asyncHandler(async (req, res) => {
 const deleteComment = asyncHandler(async (req, res) => {
   // TODO: delete a comment
 
-  const [commenId]= req.params;
+  const {commenId}= req.params;
+
+  if(!mongoose.isValidObjectId(commenId)){
+    throw new ApiError(400, "invalid comment Id")
+  }
 
   const comment= await Comment.findById(commenId)
 
