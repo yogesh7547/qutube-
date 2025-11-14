@@ -1,4 +1,4 @@
-import mongoose, {isValidObjectId, Mongoose} from "mongoose"
+import mongoose, {isValidObjectId} from "mongoose"
 import {User} from "../models/user.model.js"
 import { Subscription } from "../models/subscription.model.js"
 import {ApiError} from "../utils/ApiError.js"
@@ -12,13 +12,13 @@ const toggleSubscription = asyncHandler(async (req, res) => {
     // TODO: toggle subscription
 
     if(!isValidObjectId(channelId)){
-        throw new ApiError(400, "invalid channelId");
+        throw new ApiError(400, "invalid channel Id");
     }
 
     const channel=await User.findById(channelId)
 
     if(!channel){
-        throw new ApiError(400, "Channel not found")
+        throw new ApiError(404, "Channel not found")
     }
 
     const existingSubscription= await Subscription.findOne({
@@ -56,7 +56,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     const {channelId} = req.params
 
     if(!isValidObjectId(channelId)){
-        throw new ApiError(400, "invalid channelId")
+        throw new ApiError(400, "invalid channel Id")
     }
 
     const subscribers= await Subscription.find({

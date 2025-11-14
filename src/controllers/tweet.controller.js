@@ -1,6 +1,7 @@
 import mongoose, { isValidObjectId } from "mongoose";
 import { Tweet } from "../models/tweet.model.js";
 import { User } from "../models/user.model.js";
+import { Like } from "../models/likes.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -38,7 +39,7 @@ const getUserTweets = asyncHandler(async (req, res) => {
   const {userId}= req.params;
   const user= await User.findById(userId)
 
-  if(!mongoose.isValidObjectId(userId)){
+  if(!isValidObjectId(userId)){
       throw new ApiError(400, "invalid user Id")
     }
 
@@ -93,7 +94,7 @@ const updateTweet = asyncHandler(async (req, res) => {
   const {newContent}= req.body
   const {tweetId}= req.params
 
-  if (!mongoose.isValidObjectId(tweetId)) {
+  if (!isValidObjectId(tweetId)) {
     throw new ApiError(400, "Invalid tweet ID");
   }
   
@@ -106,6 +107,11 @@ const updateTweet = asyncHandler(async (req, res) => {
   if(!tweet){
     throw new ApiError(404, "tweet not found")
   }
+  
+   if(tweet.owner.toString()!==req.user._id.toString()){
+    throw new ApiError(403, "you are not authorized to update the tweet")
+  }
+
 
   tweet.content=newContent;
 
@@ -124,10 +130,23 @@ const updateTweet = asyncHandler(async (req, res) => {
 const deleteTweet = asyncHandler(async (req, res) => {
   //TODO: delete tweet
   const {tweetId}=req.params;
-  if(!mongoose.isValidObjectId(tweetId)){
+  if(!isValidObjectId(tweetId)){
       throw new ApiError(400, "invalid tweet Id")
     }
   const tweet= await Tweet.findById(tweetId)
+  
+  if(!tweet){
+    throw new ApiError(404, "tweet not found")
+  }
+
+  if(tweet.owner.toString()!==req.user._id.toString()){
+    throw new ApiError(403, "you are not authorized to delete the tweet")
+  }
+
+  await Like.deleteMany({
+    tweet:tweetId,
+  })
+
   await tweet.deleteOne()
 
   return res

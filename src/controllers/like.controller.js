@@ -7,8 +7,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
 import { Tweet } from "../models/tweet.model.js";
-import { updateAccountDetails } from "./user.controller.js";
-import { populate } from "dotenv";
+
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
   //get the videoid
@@ -19,14 +18,14 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
 
   const { videoId } = req.params;
 
-  if(!mongoose.isValidObjectId(videoId)){
+  if(!isValidObjectId(videoId)){
       throw new ApiError(400, "invalid video Id")
     }
 
   const video = await Video.findById(videoId);
 
   if (!video) {
-    throw new ApiError(400, "video file not found");
+    throw new ApiError(404, "video file not found");
   }
 
   const existingLike = await Like.findOne({
@@ -57,9 +56,9 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
     const updatedLike = await like.populate("likedBy", "username avatar");
 
     return res
-      .status(200)
+      .status(201)
       .json(
-        new ApiResponse(200, { updatedLike }, "successfully liked the video")
+        new ApiResponse(201, { updatedLike }, "successfully liked the video")
       );
   }
 });
@@ -70,14 +69,14 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
 
   const {commentId}= req.params;
 
-  if(!mongoose.isValidObjectId(commentId)){
+  if(!isValidObjectId(commentId)){
       throw new ApiError(400, "invalid comment Id")
     }
 
   const comment = await Comment.findById(commentId)
 
   if(!comment){
-    throw new ApiError(400, "comment not found")
+    throw new ApiError(404, "comment not found")
   }
 
   const existingLike= await Like.findOne({
@@ -104,11 +103,11 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
     comment.likes+=1;
     await comment.save()
 
-    const updatedLike= await like.populate("likedBy", "username avatar")
+    const populatedLike= await like.populate("likedBy", "username avatar")
 
     return res
     .status(200)
-    .json(200, {updatedLike}, "successfully liked the comment")
+    .json(200, {populatedLike}, "successfully liked the comment")
   }
 
 });
@@ -119,14 +118,14 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
 
   const { tweetId } = req.params;
 
-  if(!mongoose.isValidObjectId(tweetId)){
+  if(!isValidObjectId(tweetId)){
       throw new ApiError(400, "invalid tweet Id")
     }
   
   const tweet = await Tweet.findById(tweetId)
 
   if(!tweet){
-    throw new ApiError(400, "tweet not found")
+    throw new ApiError(404, "tweet not found")
   }
 
   const existingLike= await Like.findOne({
@@ -154,11 +153,11 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
     tweet.likes+=1;
     await tweet.save()
 
-    const updatedLike= await like.populate("likedBy", "username avatar");
+    const populatedLike= await like.populate("likedBy", "username avatar");
 
     return res
-    .status(200)
-    .json(200, {updatedLike}, "successfully liked the tweet")
+    .status(201)
+    .json(201, {populatedLike}, "successfully liked the tweet")
   }
 
   

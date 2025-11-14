@@ -143,7 +143,7 @@ const getVideoById = asyncHandler(async (req, res) => {
   const video = await Video.findById(videoId);
 
   if (!video) {
-    throw new ApiError(400, "video not found");
+    throw new ApiError(404, "video not found");
   }
 
   return res
@@ -171,7 +171,7 @@ const updateVideo = asyncHandler(async (req, res) => {
   const video = await Video.findById(videoId);
 
   if (!video) {
-    throw new ApiError(400, "video not found");
+    throw new ApiError(404, "video not found");
   }
 
   if (video.owner.toString() !== req.user._id.toString()) {
@@ -294,11 +294,11 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
   const video = await Video.findById(videoId);
 
   if (!video) {
-    throw new ApiError(400, "video is missing");
+    throw new ApiError(404, "video not found");
   }
 
   if (video.owner.toString() !== req.user._id.toString()) {
-    throw new ApiError(400, "only user can toggle isPublished status");
+    throw new ApiError(403, "you are not authorized to toggle isPublished status");
   }
 
   video.isPublished = !video.isPublished;

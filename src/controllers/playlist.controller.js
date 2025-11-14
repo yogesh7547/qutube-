@@ -26,15 +26,15 @@ const createPlaylist = asyncHandler(async (req, res) => {
   });
 
   if (!playlist) {
-    throw new ApiError(400, "failed to create playlist");
+    throw new ApiError(500, "failed to create playlist");
   }
 
   const populatedPlaylist = await playlist.populate("owner", "username avatar");
 
   return res
-    .status(200)
+    .status(201)
     .json(
-      new ApiResponse(200, populatedPlaylist, "playlist created successfully")
+      new ApiResponse(201, populatedPlaylist, "playlist created successfully")
     );
 });
 
@@ -42,14 +42,14 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   //TODO: get user playlists
 
-  if (!mongoose.isValidObjectId(userId)) {
+  if (!isValidObjectId(userId)) {
     throw new ApiError(400, "invalid user Id");
   }
 
   const user = await User.findById(userId).select("username avatar");
 
   if (!user) {
-    throw new ApiError(400, "user not found");
+    throw new ApiError(404, "user not found");
   }
 
   const playlists = await Playlist.find({
@@ -78,7 +78,7 @@ const getPlaylistById = asyncHandler(async (req, res) => {
   const playlist = await Playlist.findById(playlistId);
 
   if (!playlist) {
-    throw new ApiError(400, "playlist not found");
+    throw new ApiError(404, "playlist not found");
   }
 
   const populatedPlaylist = await playlist
@@ -115,16 +115,16 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 
   const playlist = await Playlist.findById(playlistId);
   if (!playlist) {
-    throw new ApiError(400, "playlist not found");
+    throw new ApiError(404, "playlist not found");
   }
 
   const video = await Video.findById(videoId);
   if (!video) {
-    throw new ApiError(400, "video not found");
+    throw new ApiError(404, "video not found");
   }
 
   if (playlist.owner.toString() !== req.user._id.toString()) {
-    throw new ApiError(400, "only owner can add videos to this playlist");
+    throw new ApiError(403, "you are not authorized to add videos to playlist");
   }
 
   if (playlist.video.includes(videoId)) {
@@ -163,20 +163,20 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 
   const playlist = await Playlist.findById(playlistId);
   if (!playlist) {
-    throw new ApiError(400, "playlist not found");
+    throw new ApiError(404, "playlist not found");
   }
 
   const video = await Video.findById(videoId);
   if (!video) {
-    throw new ApiError(400, "video not found");
+    throw new ApiError(404, "video not found");
   }
 
   if (playlist.owner.toString() !== req.user._id.toString()) {
-    throw new ApiError(400, "only owner can add videos to this playlist");
+    throw new ApiError(403, "you are not authorized to remove videos from this playlist");
   }
 
   if (!playlist.video.includes(videoId)) {
-    throw new ApiError(400, "video deosnt exist in the playlist");
+    throw new ApiError(400, "video doesn't exist in the playlist");
   }
 
   playlist.video.pull(videoId);
@@ -200,11 +200,11 @@ const deletePlaylist = asyncHandler(async (req, res) => {
   const playlist = await Playlist.findById(playlistId);
 
   if (!playlist) {
-    throw new ApiError(400, "playlist not found");
+    throw new ApiError(404, "playlist not found");
   }
 
   if (playlist.owner.toString() !== req.user._id.toString()) {
-    throw new ApiError(400, "only the owner can delete this playlist");
+    throw new ApiError(403, "you are not authorized to delete this playlist");
   }
 
   await playlist.deleteOne();
@@ -233,11 +233,11 @@ const updatePlaylist = asyncHandler(async (req, res) => {
   const playlist = await Playlist.findById(playlistId);
 
   if (!playlist) {
-    throw new ApiError(400, "playlist not found");
+    throw new ApiError(404, "playlist not found");
   }
 
   if (playlist.owner.toString() !== req.user._id.toString()) {
-    throw new ApiError(400, "only the owner can delete this playlist");
+    throw new ApiError(403, "you are not authorized to update the details in this playlist");
   }
 
   playlist.name = name;
