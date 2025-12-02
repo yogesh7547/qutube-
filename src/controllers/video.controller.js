@@ -4,10 +4,11 @@ import { Like } from "../models/likes.model.js";
 import { Comment } from "../models/comment.model.js";
 import { Playlist } from "../models/playlist.model.js";
 import { User } from "../models/user.model.js";
-import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { ApiError } from "../util/ApiError.js";
+import { ApiResponse } from "../util/ApiResponse.js";
+import { asyncHandler } from "../util/asyncHandler.js";
+import { uploadOnCloudinary } from "../util/cloudinary.js";
+import { deleteFromCloudinary } from "../util/DeleteFromCloudinary.js";
 
 
 const getAllVideos = asyncHandler(async (req, res) => {
@@ -153,7 +154,7 @@ const getVideoById = asyncHandler(async (req, res) => {
 
 const updateVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
-  const { title, description } = req.body;
+  const { title , description } = req.body;
   const newThumbnailLocalpath = req.files?.thumbnail[0]?.path;
   //TODO: update video details like title, description, thumbnail
 
@@ -256,6 +257,7 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
     if (publicId) {
       try {
+        
         const resultOfDeletion = await deleteFromCloudinary(publicId, "video");
       } catch (error) {
         console.log("failed to delete the video file ", error);

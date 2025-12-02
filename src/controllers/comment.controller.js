@@ -1,8 +1,8 @@
 import mongoose, {isValidObjectId} from "mongoose";
 import { Comment } from "../models/comment.model.js";
-import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError } from "../util/ApiError.js";
+import { ApiResponse } from "../util/ApiResponse.js";
+import { asyncHandler } from "../util/asyncHandler.js";
 import { Video } from "../models/video.model.js";
 import { Like } from "../models/likes.model.js";
 
@@ -111,9 +111,9 @@ const updateComment = asyncHandler(async (req, res) => {
 
   
   const {newContent}= req.body
-  const {commenId}=req.params;
+  const {commentId}=req.params;
 
-  if(!isValidObjectId(commenId)){
+  if(!isValidObjectId(commentId)){
     throw new ApiError(400, "invalid comment Id")
   }
 
@@ -121,7 +121,7 @@ const updateComment = asyncHandler(async (req, res) => {
     throw new ApiError(400, "content cannot be empty")
   }
 
-  const comment = await Comment.findById(commenId)
+  const comment = await Comment.findById(commentId)
 
   if(!comment){
     throw new ApiError(404, "comment not found")
@@ -143,13 +143,13 @@ const updateComment = asyncHandler(async (req, res) => {
 const deleteComment = asyncHandler(async (req, res) => {
   // TODO: delete a comment
 
-  const {commenId}= req.params;
+  const {commentId}= req.params;
 
-  if(!isValidObjectId(commenId)){
+  if(!isValidObjectId(commentId)){
     throw new ApiError(400, "invalid comment Id")
   }
 
-  const comment= await Comment.findById(commenId)
+  const comment= await Comment.findById(commentId)
   
   if (!comment) {
     throw new ApiError(404, "Comment not found");
@@ -160,7 +160,7 @@ const deleteComment = asyncHandler(async (req, res) => {
   }
 
   await Like.deleteMany({
-    comment:commenId,
+    comment:commentId,
   })
  
   await comment.deleteOne()
