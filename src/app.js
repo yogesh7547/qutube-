@@ -27,7 +27,7 @@ import playlistRouter from './routes/playlist.routes.js'
 
 //routes declaration
 app.use("/api/v1/users",userRouter)// base path
-app.use("/api/v1/like",likeRouter)
+app.use("/api/v1/likes",likeRouter)
 app.use("/api/v1/tweets",tweetRouter)
 app.use("/api/v1/comments",commentRouter)
 app.use("/api/v1/videos",videoRouter)
