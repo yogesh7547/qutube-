@@ -81,12 +81,12 @@ const getPlaylistById = asyncHandler(async (req, res) => {
     throw new ApiError(404, "playlist not found");
   }
 
-  const populatedPlaylist = await playlist
-    .populate({
+  const populatedPlaylist = await playlist.populate([
+    {
       path: "owner",
       select: "username avatar", //gives owner's playlist details
-    })
-    .populate({
+    },
+    {
       path: "video", //populate the video array in the playlist
       select: "title description duration views likes", // gives video details
       populate: {
@@ -94,7 +94,8 @@ const getPlaylistById = asyncHandler(async (req, res) => {
         path: "owner",
         select: "username avatar", // gives the owner details for each video
       },
-    });
+    },
+  ]);
 
   return res
     .status(200)
@@ -172,7 +173,10 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
   }
 
   if (playlist.owner.toString() !== req.user._id.toString()) {
-    throw new ApiError(403, "you are not authorized to remove videos from this playlist");
+    throw new ApiError(
+      403,
+      "you are not authorized to remove videos from this playlist"
+    );
   }
 
   if (!playlist.video.includes(videoId)) {
@@ -237,7 +241,10 @@ const updatePlaylist = asyncHandler(async (req, res) => {
   }
 
   if (playlist.owner.toString() !== req.user._id.toString()) {
-    throw new ApiError(403, "you are not authorized to update the details in this playlist");
+    throw new ApiError(
+      403,
+      "you are not authorized to update the details in this playlist"
+    );
   }
 
   playlist.name = name;
